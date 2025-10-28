@@ -22,6 +22,12 @@ app.use(express.json());
 app.use(morgan("combined"));
 
 const swaggerDocument = YAML.load("./swagger.yaml");
+// Dynamically set servers from env or fallback to local
+swaggerDocument.servers = [
+  {
+    url: process.env.SWAGGER_SERVER_URL || `http://localhost:${config.port}`,
+  },
+];
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/health", (req, res) => res.json({ status: "ok" }));
